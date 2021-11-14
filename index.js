@@ -90,7 +90,7 @@ async function run(){
             res.json(result)
         })
 
-        //upsert an user
+        //upsert a user
         app.put('/users', async(req, res) => {
             const user = req.body
             const filter = {email: user.email}
