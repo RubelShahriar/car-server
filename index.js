@@ -136,6 +136,9 @@ run().catch(console.dir)
 app.get('/', (req, res) => {
   res.send('Your Server is Running...')
 })
+app.get('/check-server', (req, res) => {
+  res.send('car-app Server is Running...')
+})
 
 app.listen(port, () => {
   console.log(`car-server ${port}`)
