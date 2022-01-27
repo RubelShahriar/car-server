@@ -60,11 +60,18 @@ async function run(){
 
         //get products based on user eamil
         app.get('/orders', async(req, res) => {
-            const email = req.query.email
-            const query = {email: email}
-            const cursor = orderCollection.find(query)
-            const result = await cursor.toArray()
-            res.json(result)
+            if(req.query.email){
+                const email = req.query.email
+                const query = {email: email}
+                const cursor = orderCollection.find(query)
+                const result = await cursor.toArray()
+                res.json(result)
+            }
+            else if(!req.query.email){
+                const cursor = orderCollection.find({})
+                const result = await cursor.toArray()
+                res.json(result)
+            }
         })
 
         //get a specific product
