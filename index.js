@@ -4,12 +4,15 @@ const ObjectId = require('mongodb').ObjectId;
 const app = express()
 require('dotenv').config()
 const cors = require('cors')
+const fileUpload = require('express-fileupload')
+
+//request port
 const port = process.env.PORT || 4000
 
 //middleware
 app.use(cors())
 app.use(express.json())
-
+app.use(fileUpload())
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.qudl0.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true })
 
@@ -25,9 +28,28 @@ async function run(){
 
         //post a product
         app.post('/cars', async(req, res) => {
-            const car = req.body
-            const result = await carCollection.insertOne(car)
+            const displayName = req.body.displayName
+            const email = req.body.email
+            const productName = req.body.productName
+            const place = req.body.place
+            const versionYear = req.body.versionYear
+            const originalPrice = req.body.originalPrice
+            const discountPrice = req.body.discountPrice
+            const description = req.body.description
+            const pic = req.body.image
+            const picData = pic.data
+            const encodedPic = picData.toString('base64')
+            const imageBuffer = Buffer.from(encodedPic, 'base64')
+            const product = {displayName, email, productName, place, versionYear, originalPrice, discountPrice, description, image: imageBuffer}
+            const result = await carCollection.insertOne(product)
             res.json(result)
+        })
+        
+        //GET API
+        app.get('/cars', async(req, res) =>{
+            const cursor = carCollection.find({})
+            const package = await cursor.toArray()
+            res.send(package);
         })
 
         //post a order
@@ -42,13 +64,6 @@ async function run(){
             const review = req.body
             const result = await reviewCollection.insertOne(review)
             res.json(result)
-        })
-
-        //GET API
-        app.get('/cars', async(req, res) =>{
-            const cursor = carCollection.find({})
-            const package = await cursor.toArray()
-            res.send(package);
         })
 
         //GET reviews
