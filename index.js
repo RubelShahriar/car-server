@@ -21,35 +21,45 @@ async function run(){
         await client.connect()
         console.log('connected database')
         const database = client.db('carShop')
-        const carCollection = database.collection('cars')
+        const productCollection = database.collection('products')
         const orderCollection = database.collection('orders')
         const usersCollection = database.collection('users')
         const reviewCollection = database.collection('reviews')
 
         //post a product
-        app.post('/cars', async(req, res) => {
+        app.post('/products', async(req, res) => {
             const displayName = req.body.displayName
             const email = req.body.email
             const productName = req.body.productName
             const place = req.body.place
-            const versionYear = req.body.versionYear
             const originalPrice = req.body.originalPrice
             const discountPrice = req.body.discountPrice
+            const versionYear = req.body.versionYear
             const description = req.body.description
-            const pic = req.body.image
+            const pic = req.files.image
             const picData = pic.data
             const encodedPic = picData.toString('base64')
             const imageBuffer = Buffer.from(encodedPic, 'base64')
-            const product = {displayName, email, productName, place, versionYear, originalPrice, discountPrice, description, image: imageBuffer}
-            const result = await carCollection.insertOne(product)
+            const product = {
+                displayName,
+                email,
+                image: imageBuffer,
+                productName,
+                place,
+                originalPrice,
+                discountPrice,
+                versionYear,
+                description
+            }
+            const result = await productCollection.insertOne(product)
             res.json(result)
         })
         
         //GET API
-        app.get('/cars', async(req, res) =>{
-            const cursor = carCollection.find({})
-            const package = await cursor.toArray()
-            res.send(package);
+        app.get('/products', async(req, res) =>{
+            const cursor = productCollection.find({})
+            const product = await cursor.toArray()
+            res.send(product);
         })
 
         //post a order
