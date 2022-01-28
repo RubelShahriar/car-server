@@ -43,13 +43,13 @@ async function run(){
             const product = {
                 displayName,
                 email,
-                image: imageBuffer,
                 productName,
                 place,
                 originalPrice,
                 discountPrice,
                 versionYear,
-                description
+                description,
+                image: imageBuffer
             }
             const result = await productCollection.insertOne(product)
             res.json(result)
